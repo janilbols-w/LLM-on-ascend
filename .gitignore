@@ -32,6 +32,7 @@ temp/
 
 # Project-specific generated configs (node-local)
 glm5.2/config/*.env
+kernel_meta
 
 # Optional local docker overrides
 docker-compose.override.yml

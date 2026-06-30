@@ -50,4 +50,5 @@ vllm serve $model_path \
     --async-scheduling \
     --additional-config '{"fuse_muls_add": true, "multistream_overlap_shared_expert": true, "ascend_compilation_config": {"enable_npugraph_ex": true}}' \
     --compilation-config '{"cudagraph_mode": "FULL_DECODE_ONLY"}' \
-    --speculative-config '{"num_speculative_tokens": 5, "method": "deepseek_mtp"}'
+    --speculative-config '{"num_speculative_tokens": 5, "method": "deepseek_mtp"}' \
+    2>&1 | tee ./node1.log
