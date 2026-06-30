@@ -1,0 +1,37 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Logs / runtime
+*.log
+logs/
+nohup.out
+
+# Environment / secrets
+.env
+.env.*
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Node cache
+node_modules/
+
+# Build / temp
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Project-specific generated configs (node-local)
+glm5.2/config/*.env
+
+# Optional local docker overrides
+docker-compose.override.yml
