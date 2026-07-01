@@ -38,7 +38,6 @@ for host in "${HOSTS[@]}"; do
     rsync -avz --progress \
         --exclude '.git/' \
         --exclude '.DS_Store' \
-        --exclude 'log' \
         -e ssh \
         "$SOURCE_DIR/" \
         "root@${host}:${DEST_DIR}/"

@@ -1,11 +1,11 @@
 # this obtained through ifconfig
 # nic_name is the network interface name corresponding to local_ip of the current node
 nic_name="bond1"
-local_ip="192.168.0.2"
+local_ip="192.168.0.5"
 
 # The value of node0_ip must be consistent with the value of local_ip set in node0 (master node)
 node0_ip="192.168.0.4"
-model_path=/data/nvme1/GLM-5.2-w8a8
+model_path=/data/nvme0/GLM-5.2-w8a8
 
 export HCCL_OP_EXPANSION_MODE="AIV"
 export HCCL_IF_IP=$local_ip
@@ -29,16 +29,16 @@ export VLLM_ENGINE_READY_TIMEOUT_S=1200
 
 export VLLM_VERSION=0.21.0
 vllm serve $model_path \
-    --max_model_len 40000 \
+    --max_model_len 200000 \
     --max-num-batched-tokens 4096 \
     --served-model-name glm-52 \
     --seed 1024 \
     --gpu-memory-utilization 0.95 \
-    --max-num-seqs 16 \
+    --max-num-seqs 32 \
     --headless \
-    --data-parallel-size 2 \
+    --data-parallel-size 4 \
     --data-parallel-size-local 1 \
-    --data-parallel-start-rank 1 \
+    --data-parallel-start-rank 2 \
     --data-parallel-address $node0_ip \
     --data-parallel-rpc-port 13389 \
     --tensor-parallel-size 8 \
@@ -51,4 +51,4 @@ vllm serve $model_path \
     --additional-config '{"fuse_muls_add": true, "multistream_overlap_shared_expert": true, "ascend_compilation_config": {"enable_npugraph_ex": true}}' \
     --compilation-config '{"cudagraph_mode": "FULL_DECODE_ONLY"}' \
     --speculative-config '{"num_speculative_tokens": 5, "method": "deepseek_mtp"}' \
-    2>&1 | tee ./node1.log
+    2>&1 | tee ./log/node2.`date +%y%m%d%H%M`.log
