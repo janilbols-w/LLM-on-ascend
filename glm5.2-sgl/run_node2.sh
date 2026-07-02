@@ -23,11 +23,6 @@ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
 export SGLANG_NPU_USE_MULTI_STREAM=1
 export HCCL_BUFFSIZE=1000
 export HCCL_OP_EXPANSION_MODE=AIV
-export HCCL_SOCKET_IFNAME=bond1
-
-# Run command ifconfig on two nodes, find out which inet addr has same IP with your node IP. That is your public interface, which should be added here
-export HCCL_SOCKET_IFNAME=lo
-export GLOO_SOCKET_IFNAME=lo
 
 # DEEPEP
 export DEEPEP_NORMAL_LONG_SEQ_ROUND=72
@@ -38,9 +33,15 @@ export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=600
 
 
 LOCAL_HOST=192.168.0.5
-IP_MASTER=192.168.0.4
+IP_MASTER=192.168.0.4:12312
+nic_name=bond1
 MODEL_PATH=/data/nvme0/GLM-5.2-w8a8
 RANK=2
+
+# Run command ifconfig on two nodes, find out which inet addr has same IP with your node IP. That is your public interface, which should be added here
+export HCCL_SOCKET_IFNAME=$nic_name
+export HCCL_IF_IP=$LOCAL_HOST
+export GLOO_SOCKET_IFNAME=$nic_name
 
 python3 -m sglang.launch_server \
     --model-path $MODEL_PATH \
@@ -58,5 +59,7 @@ python3 -m sglang.launch_server \
     --deepep-mode auto \
     --speculative-draft-model-quantization unquant \
     --speculative-algorithm NEXTN --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4  \
-    --disable-radix-cache
-    NODE_RANK=$RANK
+    --disable-radix-cache \
+    2>&1 | tee ./log/node1.`date +%y%m%d%H%M`.log
+
+    
