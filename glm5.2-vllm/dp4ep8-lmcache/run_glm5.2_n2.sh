@@ -27,15 +27,17 @@ export TASK_QUEUE_ENABLE=1
 export CPU_AFFINITY_CONF=1
 export VLLM_ENGINE_READY_TIMEOUT_S=1200
 
+export VLLM_VERSION=0.21.0
+
 export LMCACHE_USE_EXPERIMENTAL=True
 export LMCACHE_CHUNK_SIZE=256
 export LMCACHE_LOCAL_CPU=TRUE
 export LMCACHE_MAX_LOCAL_CPU_SIZE=32
 export LMCACHE_LOCAL_DISK="/data/nvme0"
 export LMCACHE_MAX_LOCAL_DISK_SIZE=128
-
 export TORCH_NPU_DEVICE_CAPABILITY=8.0
-export VLLM_VERSION=0.21.0
+export PYTHONHASHSEED=0
+
 vllm serve $model_path \
     --max_model_len 200000 \
     --max-num-batched-tokens 4096 \
@@ -59,7 +61,11 @@ vllm serve $model_path \
     --additional-config '{"fuse_muls_add": true, "multistream_overlap_shared_expert": true, "ascend_compilation_config": {"enable_npugraph_ex": true}}' \
     --compilation-config '{"cudagraph_mode": "FULL_DECODE_ONLY"}' \
     --speculative-config '{"num_speculative_tokens": 5, "method": "deepseek_mtp"}' \
+    --no-enable-prefix-caching \
     --kv-transfer-config '{"kv_connector":"LMCacheAscendConnector","kv_role":"kv_both"}' \
     2>&1 | tee ./log/node2.`date +%y%m%d%H%M`.log
 
     # --no-enable-prefix-caching \
+    # --kv-transfer-config '{"kv_connector":"LMCacheAscendConnector","kv_role":"kv_both"}' \
+    # --kv-transfer-config '{"kv_connector":"LMCacheAscendConnectorV1Dynamic","kv_role":"kv_both","kv_connector_module_path":"lmcache_ascend.integration.vllm.lmcache_ascend_connector_v1"}' \
+    
