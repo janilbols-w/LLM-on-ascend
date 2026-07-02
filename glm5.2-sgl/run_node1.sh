@@ -59,10 +59,10 @@ cmd=(
     --node-rank "$RANK"
     --dist-init-addr "$IP_MASTER"
     --chunked-prefill-size 16384
-    --max-prefill-tokens 80000
+    --max-prefill-tokens 200000
     --trust-remote-code
     --host 192.168.0.4
-    --mem-fraction-static 0.80
+    --mem-fraction-static 0.90
     --port 7000
     --served-model-name glm-52
     # --moe-a2a-backend deepep
@@ -74,7 +74,7 @@ cmd=(
     --speculative-num-draft-tokens 4
     # --disable-radix-cache
     # --disable-prefill-cuda-graph
-    --cuda-graph-backend-prefill=disable
+    --cuda-graph-backend-prefill=disabled
     --cuda-graph-max-bs-decode 32
     # --disable-cuda-graph-padding
     # --disable-cuda-graph
