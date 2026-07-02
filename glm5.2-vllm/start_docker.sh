@@ -2,7 +2,7 @@ export IMAGE=quay.io/ascend/vllm-ascend:glm5.2
 CMD=${CMD:-'bash'}
 docker run --rm \
     --name vllm-ascend-huize \
-    --shm-size=1g \
+    --shm-size=128g \
     --net=host \
     --privileged \
     --device /dev/davinci0 \

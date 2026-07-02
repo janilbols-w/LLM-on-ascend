@@ -6,7 +6,7 @@ IMAGE=swr.cn-southwest-2.myhuaweicloud.com/base_image/dockerhub/lmsysorg/sglang:
 NAME=sgl-ascend-huize
 
 #start container
-docker run -itd --shm-size=16g --privileged=true --name ${NAME} \
+docker run -it --shm-size=16g --privileged=true --name ${NAME} \
 --privileged=true --net=host \
 -v /var/queue_schedule:/var/queue_schedule \
 -v /etc/ascend_install.info:/etc/ascend_install.info \
