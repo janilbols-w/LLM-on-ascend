@@ -1,4 +1,7 @@
-echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+#!/usr/bin/env bash
+set -euo pipefail
+
+# echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 sysctl -w vm.swappiness=0
 sysctl -w kernel.numa_balancing=0
 sysctl -w kernel.sched_migration_cost_ns=50000
@@ -11,8 +14,8 @@ unset HTTPS_PROXY
 unset HTTP_PROXY
 unset ASCEND_LAUNCH_BLOCKING
 # cann
-source /usr/local/Ascend/ascend-toolkit/set_env.sh
-source /usr/local/Ascend/nnal/atb/set_env.sh
+# source /usr/local/Ascend/ascend-toolkit/set_env.sh
+# source /usr/local/Ascend/nnal/atb/set_env.sh
 
 export STREAMS_PER_DEVICE=32
 export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=600
@@ -43,24 +46,40 @@ export HCCL_SOCKET_IFNAME=$nic_name
 export HCCL_IF_IP=$LOCAL_HOST
 export GLOO_SOCKET_IFNAME=$nic_name
 
+export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
 
-python3 -m sglang.launch_server \
-    --model-path $MODEL_PATH \
-    --attention-backend ascend \
-    --device npu \
-    --tp-size 32 --nnodes 4 --node-rank $RANK --dist-init-addr $IP_MASTER \
-    --chunked-prefill-size 16384 --max-prefill-tokens 131072 \
-    --trust-remote-code \
-    --host 127.0.0.1 \
-    --mem-fraction-static 0.8 \
-    --port 8000 \
-    --served-model-name glm-5 \
-    --cuda-graph-max-bs-decode 32 \
-    --moe-a2a-backend deepep \
-    --deepep-mode auto \
-    --speculative-draft-model-quantization unquant \
-    --speculative-algorithm NEXTN --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4  \
-    --disable-radix-cache \
-    2>&1 | tee ./log/node1.`date +%y%m%d%H%M`.log
+LOG_FILE=./log/node3.$(date +%y%m%d%H%M).log
+cmd=(
+    python3 -m sglang.launch_server
+    --model-path "$MODEL_PATH"
+    --attention-backend ascend
+    --device npu
+    --tp-size 32
+    --nnodes 4
+    --node-rank "$RANK"
+    --dist-init-addr "$IP_MASTER"
+    --chunked-prefill-size 16384
+    --max-prefill-tokens 80000
+    --trust-remote-code
+    --host 192.168.0.4
+    --mem-fraction-static 0.80
+    --port 7000
+    --served-model-name glm-52
+    # --moe-a2a-backend deepep
+    # --deepep-mode auto
+    --speculative-draft-model-quantization unquant
+    --speculative-algorithm NEXTN
+    --speculative-num-steps 3
+    --speculative-eagle-topk 1
+    --speculative-num-draft-tokens 4
+    # --disable-radix-cache
+    # --disable-prefill-cuda-graph
+    --cuda-graph-backend-prefill=disable
+    --cuda-graph-max-bs-decode 32
+    # --disable-cuda-graph-padding
+    # --disable-cuda-graph
+)
+
+"${cmd[@]}" 2>&1 | tee "$LOG_FILE"
 
     
