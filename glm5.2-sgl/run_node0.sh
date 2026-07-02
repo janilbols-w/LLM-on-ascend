@@ -64,7 +64,7 @@ cmd=(
     --max-prefill-tokens 80000
     --trust-remote-code
     --host 192.168.0.4
-    --mem-fraction-static 0.90
+    --mem-fraction-static 0.80
     --port 7000
     --served-model-name glm-52
     # --moe-a2a-backend deepep
