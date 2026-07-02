@@ -61,7 +61,7 @@ cmd=(
     --node-rank "$RANK"
     --dist-init-addr "$IP_MASTER"
     --chunked-prefill-size 16384
-    --max-prefill-tokens 200000
+    --max-prefill-tokens 80000
     --trust-remote-code
     --host 192.168.0.4
     --mem-fraction-static 0.90
@@ -77,7 +77,7 @@ cmd=(
     # --disable-radix-cache
     # --disable-prefill-cuda-graph
     --cuda-graph-backend-prefill=disabled
-    --cuda-graph-max-bs-decode 32
+    --cuda-graph-max-bs-decode 16
     # --disable-cuda-graph-padding
     # --disable-cuda-graph
 )
